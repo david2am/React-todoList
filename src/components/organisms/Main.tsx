@@ -1,24 +1,34 @@
-import { useState } from "react"
-import { Item, Search } from "../atoms"
+import { FormEvent, useEffect, useRef, useState } from "react"
 
 const Main = (): JSX.Element => {
-  const [todoList, setTodoList] = useState<string[]>(['example'])
+  const [todoList, setTodoList] = useState<string[]>([])
 
-  const addTodo = (newItem: string): void => {
-    setTodoList([...todoList, newItem])
-  }
+  const searchValue = useRef<HTMLInputElement>(null)
 
-  const removeTodo = (id: string): void => {
-    setTodoList(todoList.filter((e) => e !== id))
+  useEffect(() => {
+    const existingTodoList = localStorage.getItem('todoList')
+    existingTodoList && setTodoList(JSON.parse(existingTodoList) as string[])
+  }, [])
+
+  const handleSubmit = (e: FormEvent): void => {
+    e.preventDefault()
+    if (searchValue.current) {
+      const newTodoList = [...todoList, searchValue.current.value]
+      localStorage.setItem('todoList', newTodoList.toString())
+      setTodoList(newTodoList)
+    }
   }
   
   return (
     <main>
-      <Search />
+      <form onSubmit={handleSubmit}>
+        <input type="text" ref={searchValue} />
+        <button>Add new one</button>
+      </form>
       <ul>
         {todoList.map((e) => (
-          <li>
-            <Item key={e} />
+          <li key={e}>
+            {e}
           </li>
         ))}
       </ul>
