@@ -18,7 +18,11 @@ const Main = (): JSX.Element => {
 
   const handleValue = (e: ChangeEvent<HTMLInputElement>): void => setValue(e.target.value)
 
-  const handleRemoveTodo = (el: string): void => setTodoList(todoList.filter(e => e !== el))
+  const removeTodo = (el: string): void => {
+    const newTodoList = todoList.filter(e => e !== el)
+    localStorage.setItem('todoList', newTodoList.toString())
+    setTodoList(newTodoList)
+  }
 
   function addTodo() {
     const newTodoList = [...todoList, value]
@@ -34,7 +38,7 @@ const Main = (): JSX.Element => {
       </form>
       <ul>
         {todoList.map(e => (
-          <li key={e} onClick={() => handleRemoveTodo(e)}>
+          <li key={e} onClick={() => removeTodo(e)}>
             {e}
           </li>
         ))}
