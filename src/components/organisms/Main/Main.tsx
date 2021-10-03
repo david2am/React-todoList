@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
+import './main.sass'
 
 const Main = (): JSX.Element => {
   const [value, setValue] = useState<string>('')
