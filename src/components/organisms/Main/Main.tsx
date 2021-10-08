@@ -2,43 +2,52 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import './main.sass'
 
 const Main = (): JSX.Element => {
-  const [value, setValue] = useState<string>('')
+  // state
+  const [inputValue, setInputValue] = useState<string>('')
   const [todoList, setTodoList] = useState<string[]>([])
 
+  // effects
   useEffect(() => {
     const existingTodoList = localStorage.getItem('todoList')    
     existingTodoList && setTodoList(existingTodoList.split(','))
   }, [])
 
-  const handleSubmit = (e: FormEvent): void => {
-    e.preventDefault()
+  // handlers
+  const handleSubmit = (event: FormEvent): void => {
+    event.preventDefault()
     addTodo()
-    setValue('')
+    setInputValue('')
   }
 
-  const handleValue = (e: ChangeEvent<HTMLInputElement>): void => setValue(e.target.value)
+  const handleInput = ({ target: { value } }: ChangeEvent<HTMLInputElement>): void => setInputValue(value)
 
-  const removeTodo = (el: string): void => {
+  const handleClick = (key: string): void => {
+    removeTodo(key)
+  }
+
+  // helpers
+  function removeTodo (el: string): void {
     const newTodoList = todoList.filter(e => e !== el)
     localStorage.setItem('todoList', newTodoList.toString())
     setTodoList(newTodoList)
   }
 
   function addTodo() {
-    const newTodoList = [...todoList, value]
+    const newTodoList = [...todoList, inputValue]
     localStorage.setItem('todoList', newTodoList.toString())
     setTodoList(newTodoList)
   }
   
+  // JSX
   return (
     <main>
       <form onSubmit={handleSubmit}>
-        <input type="text" value={value} onChange={handleValue} />
+        <input type="text" value={inputValue} onChange={handleInput} />
         <button>Add new one</button>
       </form>
       <ul>
         {todoList.map(e => (
-          <li key={e} onClick={() => removeTodo(e)}>
+          <li key={e} onClick={() => handleClick(e)}>
             {e}
           </li>
         ))}
